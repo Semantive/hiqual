@@ -4,3 +4,14 @@
 *.jar
 *.war
 *.ear
+
+.idea/libraries/*
+.idea/scopes/*
+.idea/.name
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/uiDesigner.xml
+.idea/vcs.xml
+.idea/workspace.xml
