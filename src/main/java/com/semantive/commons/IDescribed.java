@@ -1,4 +1,4 @@
-package com.semantive.commons.functional;
+package com.semantive.commons;
 
 /**
  * Jacek Lewandowski

@@ -1,10 +1,10 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.pagination;
 
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 import com.semantive.commons.functional.AbstractElementCollection;
 import com.semantive.commons.functional.ElementCollection;
 import com.semantive.commons.functional.ElementCollectionFactory;
+import com.semantive.hiqual.IResultSetConfig;
 
 import java.io.Serializable;
 import java.util.*;
@@ -29,11 +29,11 @@ public class PaginationAwareListWrapper<T> extends AbstractElementCollection<T, 
         this._baseList = baseList;
         this._offset = 0;
         this._totalSize = totalSize;
-        if (config != null && config.pageDefinition() != null) this._offset = config.pageDefinition().getPageStart();
+        if (config != null && config.pageDefinition() != null) this._offset = config.pageDefinition().pageStart;
     }
 
     public Range<Integer> range() {
-        return Ranges.closedOpen(_offset, _offset + size());
+        return Range.closedOpen(_offset, _offset + size());
     }
 
     public int size() {

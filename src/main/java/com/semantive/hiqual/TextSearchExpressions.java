@@ -1,8 +1,8 @@
 package com.semantive.hiqual;
 
 import com.google.common.base.Function;
+import com.semantive.commons.IDescribed;
 import com.semantive.commons.functional.F1;
-import com.semantive.commons.functional.IDescribed;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;

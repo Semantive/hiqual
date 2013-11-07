@@ -1,4 +1,4 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.filter;
 
 import java.util.ArrayList;
 import java.util.Collections;

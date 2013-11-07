@@ -1,6 +1,8 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.core;
 
 import com.semantive.commons.Utils;
+import com.semantive.hiqual.IResultSetConfig;
+import com.semantive.hiqual.TextSearchExpressions;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 
@@ -106,8 +108,8 @@ public class HibernateQueryUtils {
 
     public static void applyPaging(Query query, IResultSetConfig config) {
         if (config != null && config.pageDefinition() != null) {
-            query.setFirstResult(config.pageDefinition().getPageStart());
-            query.setFirstResult(config.pageDefinition().getPageSize());
+            query.setFirstResult(config.pageDefinition().pageStart);
+            query.setFirstResult(config.pageDefinition().pageSize);
         }
     }
 

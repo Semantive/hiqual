@@ -1,4 +1,4 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.core;
 
 import com.semantive.commons.PropertySetter;
 import com.semantive.commons.Utils;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Jacek Lewandowski
  *         TODO testy i dokumentacja
  */
-public class CustomResultTransformer extends BasicTransformerAdapter {
+public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
 
     public static final char DOT = '.';
 
@@ -31,12 +31,12 @@ public class CustomResultTransformer extends BasicTransformerAdapter {
 
     private Map<String, Class> classReplacements;
 
-    public static CustomResultTransformer build(Class beanClass) {
-        return new CustomResultTransformer(beanClass);
+    public static AliasToBeanCustomTransformer build(Class beanClass) {
+        return new AliasToBeanCustomTransformer(beanClass);
     }
 
 
-    public CustomResultTransformer skipLeadingComponent(String component) {
+    public AliasToBeanCustomTransformer skipLeadingComponent(String component) {
         checkIfNotInitializedYet();
         if (GenericValidator.isBlankOrNull(component))
             throw new IllegalArgumentException("The component cannot be blank or null.");
@@ -45,20 +45,20 @@ public class CustomResultTransformer extends BasicTransformerAdapter {
     }
 
 
-    public CustomResultTransformer usePathSeparator(char separator) {
+    public AliasToBeanCustomTransformer usePathSeparator(char separator) {
         checkIfNotInitializedYet();
         this.pathSeparator = separator;
         return this;
     }
 
 
-    public CustomResultTransformer setClassReplacement(String propertyPath, Class clazz) {
+    public AliasToBeanCustomTransformer setClassReplacement(String propertyPath, Class clazz) {
         if (classReplacements == null) classReplacements = new HashMap<String, Class>();
         classReplacements.put(propertyPath, clazz);
         return this;
     }
 
-    private CustomResultTransformer(Class beanClass) {
+    private AliasToBeanCustomTransformer(Class beanClass) {
         this.beanClass = beanClass;
     }
 
@@ -89,7 +89,7 @@ public class CustomResultTransformer extends BasicTransformerAdapter {
                 propertySetters[i] = new PropertySetter(paths[i], beanClass, "\\" + pathSeparator, replacements);
             }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Failed to initialize the CustomResultTransformer for class %s and property paths %s.", beanClass, Arrays.toString(paths)), e);
+            throw new RuntimeException(String.format("Failed to initialize the AliasToBeanCustomTransformer for class %s and property paths %s.", beanClass, Arrays.toString(paths)), e);
         }
     }
 
@@ -119,7 +119,7 @@ public class CustomResultTransformer extends BasicTransformerAdapter {
             throw new IllegalStateException("This method can be called only before initialization.");
     }
 
-    public CustomResultTransformer setClassReplacements(Map<String, Class> replacements) {
+    public AliasToBeanCustomTransformer setClassReplacements(Map<String, Class> replacements) {
         this.classReplacements = replacements;
         return this;
     }

@@ -1,8 +1,9 @@
 package com.semantive.hiqual;
 
 import com.google.common.collect.Range;
-import com.google.common.collect.Ranges;
 import com.semantive.commons.functional.Option;
+import com.semantive.hiqual.filter.*;
+import com.semantive.hiqual.pagination.PageDefinition;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.criterion.Order;
@@ -49,8 +50,8 @@ public class ResultSetConfigBuilder {
 
     public ResultSetConfigBuilder baseOnExisting(IResultSetConfig resultSetConfig) {
         if (resultSetConfig.pageDefinition() != null) {
-            offset = resultSetConfig.pageDefinition().getPageStart();
-            fetchSize = resultSetConfig.pageDefinition().getPageSize();
+            offset = resultSetConfig.pageDefinition().pageStart;
+            fetchSize = resultSetConfig.pageDefinition().pageSize;
         } else {
             offset = null;
             fetchSize = null;
@@ -74,8 +75,8 @@ public class ResultSetConfigBuilder {
     }
 
     public ResultSetConfigBuilder setPageDefinition(PageDefinition pageDefinition) {
-        this.offset = pageDefinition.getPageStart();
-        this.fetchSize = pageDefinition.getPageSize();
+        this.offset = pageDefinition.pageStart;
+        this.fetchSize = pageDefinition.pageSize;
         return this;
     }
 
@@ -307,9 +308,9 @@ public class ResultSetConfigBuilder {
         @Override
         public Range<Integer> range() {
             if (_pageDefinition != null) {
-                return Ranges.closedOpen(_pageDefinition.getPageStart(), _pageDefinition.getPageStart() + _pageDefinition.getPageSize());
+                return Range.closedOpen(_pageDefinition.pageStart, _pageDefinition.pageStart + _pageDefinition.pageSize);
             } else {
-                return Ranges.closedOpen(0, Integer.MAX_VALUE);
+                return Range.closedOpen(0, Integer.MAX_VALUE);
             }
         }
 

@@ -1,4 +1,4 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.filter;
 
 /**
  * <br/>User: Piotr Jędruszuk (pjedruszuk@semantive.pl)

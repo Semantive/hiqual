@@ -104,7 +104,7 @@ public class PropertySetter<T> {
         }
         try {
             if (traverseCollections && Utils.isCollectionInterfaceOrArray(classes[classes.length - 1])) {
-                Class c = classes[classes.length - 1];
+                Class<?> c = classes[classes.length - 1];
 
                 if (value != null || setEmptyCollectionIfNull) {
                     int size = (value != null) ? Utils.getCollectionOrArraySize(value) : 0;

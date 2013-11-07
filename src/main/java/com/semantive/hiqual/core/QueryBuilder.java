@@ -1,7 +1,12 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.core;
 
 import com.semantive.commons.Utils;
 import com.semantive.commons.functional.Void1;
+import com.semantive.hiqual.FetchableProperty;
+import com.semantive.hiqual.IResultSetConfig;
+import com.semantive.hiqual.TextSearchExpressions;
+import com.semantive.hiqual.filter.*;
+import com.semantive.hiqual.pagination.PaginationAwareListWrapper;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -411,8 +416,8 @@ public class QueryBuilder<T> {
         Query query = session.createQuery(buf.toString());
 
         if (resultSetConfig != null && resultSetConfig.pageDefinition() != null) {
-            query.setFirstResult(resultSetConfig.pageDefinition().getPageStart());
-            query.setMaxResults(resultSetConfig.pageDefinition().getPageSize());
+            query.setFirstResult(resultSetConfig.pageDefinition().pageStart);
+            query.setMaxResults(resultSetConfig.pageDefinition().pageSize);
         }
 
         if (parametersToSet != null) {
@@ -422,7 +427,7 @@ public class QueryBuilder<T> {
         }
 
         if (resultSetConfig.propertiesToFetch() != null && !resultSetConfig.propertiesToFetch().isEmpty())
-            query.setResultTransformer(CustomResultTransformer.build(targetEntityClass).usePathSeparator(CustomResultTransformer.UNDERSCORE).setClassReplacements(replacements));
+            query.setResultTransformer(AliasToBeanCustomTransformer.build(targetEntityClass).usePathSeparator(AliasToBeanCustomTransformer.UNDERSCORE).setClassReplacements(replacements));
 
         return query;
     }
@@ -471,7 +476,7 @@ public class QueryBuilder<T> {
         if (resultSetConfig != null && resultSetConfig.pageDefinition() != null) {
             Query countQuery = generateCountQuery(session);
             int totalSize = ((Number) countQuery.uniqueResult()).intValue();
-            return new PaginationAwareListWrapper<T>(mainQuery.list(), resultSetConfig.pageDefinition().getPageStart(), totalSize);
+            return new PaginationAwareListWrapper<T>(mainQuery.list(), resultSetConfig.pageDefinition().pageStart, totalSize);
         } else {
             List<T> list = mainQuery.list();
             return new PaginationAwareListWrapper<T>(list, 0, list.size());

@@ -1,6 +1,8 @@
 package com.semantive.hiqual;
 
 import com.google.common.collect.Range;
+import com.semantive.hiqual.filter.WhereConditions;
+import com.semantive.hiqual.pagination.PageDefinition;
 import org.hibernate.criterion.Order;
 
 import java.util.List;

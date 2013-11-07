@@ -1,4 +1,4 @@
-package com.semantive.hiqual;
+package com.semantive.hiqual.pagination;
 
 /**
  * Interfejs dla kolekcji paginowalnych.
