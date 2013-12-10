@@ -51,6 +51,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>hiqual-releases</id>
+            <url>http://localhost:9080/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>hiqual-snapshots</id>
+            <url>http://localhost:9080/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.hibernate</groupId>
