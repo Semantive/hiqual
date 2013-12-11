@@ -22,8 +22,7 @@ import java.text.ParseException;
 import java.util.*;
 
 /**
- * @author <a href="mailto:lewandowski.jacek@gmail.com">Jacek Lewandowski</a> Warsaw University of Technology, Faculty of Electronics and Computer Science,
- *         2008
+ * @author Jacek Lewandowski
  */
 public class Utils {
 

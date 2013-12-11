@@ -5,8 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <br/>User: Piotr Jędruszuk (pjedruszuk@semantive.pl)
- * <br/>Date: 09.05.13 14:50
+ * @author Piotr Jędruszuk
  */
 public class ComplexWhereCondition extends AbstractWhereCondition {
 

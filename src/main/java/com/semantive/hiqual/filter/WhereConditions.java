@@ -1,8 +1,7 @@
 package com.semantive.hiqual.filter;
 
 /**
- * <br/>User: Piotr Jędruszuk (pjedruszuk@semantive.pl)
- * <br/>Date: 23.04.13 13:21
+ * @author Piotr Jędruszuk
  */
 public class WhereConditions {
 

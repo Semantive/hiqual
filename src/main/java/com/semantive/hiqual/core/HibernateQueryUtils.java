@@ -9,7 +9,7 @@ import org.hibernate.criterion.Order;
 import java.util.Iterator;
 
 /**
- * Created by Jacek Lewandowski on 6/2/12 at 9:16 AM
+ * @author Jacek Lewandowski
  */
 public class HibernateQueryUtils {
 

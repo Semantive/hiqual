@@ -15,8 +15,7 @@ import static com.semantive.commons.functional.Option.none;
 import static com.semantive.commons.functional.Option.some;
 
 /**
- * <br/>User: Piotr Jędruszuk (pjedruszuk@semantive.pl)
- * <br/>Date: 21.02.13 15:30
+ * @author Piotr Jędruszuk
  */
 public class ReflectionUtils {
 

@@ -1,8 +1,7 @@
 package com.semantive.hiqual.filter;
 
 /**
- * <br/>User: Piotr Jędruszuk (pjedruszuk@semantive.pl)
- * <br/>Date: 09.05.13 15:25
+ * @author Piotr Jędruszuk
  */
 public abstract class AbstractWhereCondition {
 
