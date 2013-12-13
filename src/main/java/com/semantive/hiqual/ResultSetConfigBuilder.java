@@ -11,11 +11,15 @@ import org.hibernate.criterion.Order;
 import java.util.*;
 
 /**
- * Klasa narzędziowa do tworzenia konfiguracji wyników.
+ * A builder class for creating {@link IResultSetConfig} objects.
  *
  * @author Jacek Lewandowski
+ *         <p/>
+ *         TODO
+ *         - change setXXX to withXXX
+ *         - documentation
+ *         - make underlying object immutable
  */
-// TODO doc
 public class ResultSetConfigBuilder {
 
     private Integer offset;
@@ -32,20 +36,10 @@ public class ResultSetConfigBuilder {
 
     private WhereConditions whereConditions;
 
-    public static final IResultSetConfig ALL = new ResultSetConfigBuilder().setAllResults().build();
-
-    public static final IResultSetConfig FIRST = new ResultSetConfigBuilder().setOneResult().build();
-
-    public static final IResultSetConfig COUNT_ONLY = new ResultSetConfigBuilder().setNoResult().build();
-
     public ResultSetConfig build() {
-        PageDefinition pd = null;
-        if (offset != null || fetchSize != null) {
-            pd = new PageDefinition(offset != null ? offset : 0, fetchSize != null ? fetchSize : Integer.MAX_VALUE);
-        }
         if (GenericValidator.isBlankOrNull(searchString)) searchString = null;
 
-        return new ResultSetConfig(pd, orders, textSearchExpressions, whereConditions, propertiesToFetch, searchString);
+        return new ResultSetConfig(new PageDefinition(offset, fetchSize), orders, textSearchExpressions, whereConditions, propertiesToFetch, searchString);
     }
 
     public ResultSetConfigBuilder baseOnExisting(IResultSetConfig resultSetConfig) {

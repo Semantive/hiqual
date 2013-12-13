@@ -2,20 +2,27 @@ package com.semantive.commons;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.semantive.commons.functional.F0;
+import com.semantive.commons.functional.F2;
 import com.semantive.commons.functional.ListWrapper;
+import com.semantive.commons.functional.Void2;
+import com.semantive.hiqual.IDataObject;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -26,9 +33,6 @@ import java.util.*;
  */
 public class Utils {
 
-    public final static int[] TIME_SET = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
-
-    public final static int[] DATE_SET = new int[]{Calendar.ERA, Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH};
 
     private static final String SQL_WILDCARD_CHARACTER = "%";
 
@@ -81,7 +85,6 @@ public class Utils {
         return fullStrArr(true, true, null, objects);
     }
 
-
     public static String[] strArr(String nullReplacement, Object... objects) {
         return fullStrArr(true, false, nullReplacement, objects);
     }
@@ -128,28 +131,6 @@ public class Utils {
         return i;
     }
 
-    /**
-     * Oblicza ile roznice w miesiacach pomiedzy dayWhenCalc i birthDate. Wykorzysytwane do sprawdzenia wieku zwierzecia w dniu uboju
-     *
-     * @param birthDate
-     * @param dayWhenCalc
-     * @return roznica w miesiacach pomiedzy dayWhenCalc i birthDate
-     */
-    public static int calcMonthAgeInDate(Date birthDate, Date dayWhenCalc) {
-        Calendar curCal = Calendar.getInstance();
-        if (dayWhenCalc != null) {
-            curCal.setTime(dayWhenCalc);
-        }
-
-        Calendar birthCal = Calendar.getInstance();
-        birthCal.setTime(birthDate);
-
-        return curCal.get(Calendar.YEAR) * 12 + curCal.get(Calendar.MONTH) - (birthCal.get(Calendar.YEAR) * 12 + birthCal.get(Calendar.MONTH));
-    }
-
-    public static int calcMonthAge(Date birthDate) {
-        return calcMonthAgeInDate(birthDate, null);
-    }
 
     /**
      * Zwraca reprezentacje wszystkich obiektow w postaci stringa. Jesli ktorys z obiektow jest nuller, to zwraca nulla.
@@ -205,47 +186,6 @@ public class Utils {
             }
         }
         return buf.substring(0, buf.length() - separator.length());
-    }
-
-    /**
-     * Zeruje czas w dacie.
-     */
-    public static Date clearTime(Date dateTime) {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(dateTime);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
-    /**
-     * Ustawia date na koniec tego dnia
-     */
-    public static Date setEndOfDayDate(Date dateTime) {
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(dateTime);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 99);
-        return calendar.getTime();
-    }
-
-    /**
-     * Wylicza dokladny wiek w miesiacach, od urodzenia do teraz
-     *
-     * @param birthDate data narodzin
-     * @return wiek podany w double
-     */
-    public static double calcAccurateMonthAge(Date birthDate) {
-        Calendar cur = GregorianCalendar.getInstance();
-        double curTime = (double) cur.get(Calendar.YEAR) * 12d + (double) cur.get(Calendar.MONTH) + (double) (cur.get(Calendar.DAY_OF_MONTH) - 1) / (double) cur.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Calendar birth = GregorianCalendar.getInstance();
-        birth.setTime(birthDate);
-        double birthTime = (double) birth.get(Calendar.YEAR) * 12d + (double) birth.get(Calendar.MONTH) + (double) (birth.get(Calendar.DAY_OF_MONTH) - 1) / (double) birth.getActualMaximum(Calendar.DAY_OF_MONTH);
-        return curTime - birthTime;
     }
 
     /**
@@ -309,9 +249,6 @@ public class Utils {
         return map.get(keys[keys.length - 1]);
     }
 
-    public static boolean isCollectionInterfaceOrArray(Class c) {
-        return c.isAssignableFrom(SortedSet.class) || c.isAssignableFrom(SortedMap.class) || c.isAssignableFrom(List.class) || c.isArray();
-    }
 
     public static int getCollectionOrArraySize(Object value) {
         if (value.getClass().isArray()) return Array.getLength(value);
@@ -359,7 +296,7 @@ public class Utils {
     }
 
 
-    public static <SourceType, DestinationType> void enrich(Collection<DestinationType> collection, Function2<Void, SourceType, DestinationType> enrichmentFunction, Collection<SourceType> sourceData, Function<Object, Object> identifierExtractor) {
+    public static <SourceType, DestinationType> void enrich(Collection<DestinationType> collection, F2<SourceType, DestinationType, ?> enrichmentFunction, Collection<SourceType> sourceData, Function<Object, Object> identifierExtractor) {
         Map<Object, SourceType> map = new HashMap<Object, SourceType>(collection.size());
         for (SourceType o : sourceData) {
             map.put(identifierExtractor.apply(o), o);
@@ -371,26 +308,6 @@ public class Utils {
                 enrichmentFunction.apply(src, o);
             }
         }
-    }
-
-
-    public static boolean equals(Object o1, Object o2, String propertyPath) {
-        if (o1 != null && o2 != null) {
-            if (o1 == o2) return true;
-
-            PropertySetter ps1 = new PropertySetter(propertyPath, o1.getClass());
-            PropertySetter ps2 = new PropertySetter(propertyPath, o2.getClass());
-
-            return ObjectUtils.equals(ps1.getProperty(o1), ps2.getProperty(o2));
-        } else {
-            return o1 == o2;
-        }
-    }
-
-    public static boolean isNull(Object o, String propertyPath) {
-        if (o == null) return true;
-        PropertySetter ps = new PropertySetter(propertyPath, o.getClass());
-        return ps.getProperty(o) == null;
     }
 
     public static <T> T coalesce(T... values) {
@@ -432,43 +349,6 @@ public class Utils {
         };
     }
 
-    /**
-     * Metoda podmienia podane pola z Calendar w dacie baseDate na pola z sourceDate.
-     *
-     * @param baseDate   data w której mają być podmienione pola
-     * @param sourceDate data z której mają być wzięte nowe wartości pól
-     * @param fields     pola - Calendar.xxx
-     * @return data baseDate z podmienionymi polami
-     */
-    public static Date replaceDateFields(Date baseDate, Date sourceDate, int... fields) {
-        Calendar base = Calendar.getInstance();
-        base.setTime(baseDate);
-
-        Calendar source = Calendar.getInstance();
-        source.setTime(sourceDate);
-
-        for (int field : fields) {
-            base.set(field, source.get(field));
-        }
-
-        return base.getTime();
-    }
-
-    /**
-     * Sprawdza czy wsrod obiektow znajduje sie obiekt
-     *
-     * @param what  obiekt szukany
-     * @param where obiekty wsrod ktorych jest poszukiwany
-     * @return true jeśli znajdziemy obiekt, false jesli nie znajdziemy.
-     */
-    public static boolean contains(Object what, Object... where) {
-        for (Object o : where) {
-            if (o.equals(what)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Zaokragla wartosc, do wyznaczonego miejsca po przecinku
@@ -496,7 +376,7 @@ public class Utils {
         if (str == null) {
             return null;
         } else {
-            return str.replaceAll("[\\*\\%\\_]", " ");
+            return str.replaceAll("[\\*%_]", " ");
         }
     }
 
@@ -525,7 +405,7 @@ public class Utils {
                 }
             }
 
-            return (String[]) ArrayUtils.subarray(tokens, 0, k);
+            return ArrayUtils.subarray(tokens, 0, k);
         }
     }
 
@@ -613,6 +493,7 @@ public class Utils {
 
     }
 
+    @Deprecated // use newMap
     public static <K, V> Map<K, V> makeMap(Object... keysAndValues) {
         Map map = new HashMap(keysAndValues.length >> 1);
         for (int i = 0; i < keysAndValues.length; i += 2) {
@@ -624,39 +505,21 @@ public class Utils {
         return map;
     }
 
-    public static <V> Set<V> makeSet(V... values) {
-        Set set = new HashSet(values.length);
-        Collections.addAll(set, values);
+    public static <K, V> Map<K, V> newMap(Pair<K, V>... keyValuePairs) {
+        Map<K, V> map = new HashMap<K, V>(keyValuePairs.length);
+        for (Pair<K, V> pair : keyValuePairs) {
+            map.put(pair.getKey(), pair.getValue());
+        }
 
-        return set;
+        return map;
     }
 
-    public static <V extends Comparable<V>> Set<V> makeSortedSet(V... values) {
+    public static <V extends Comparable<V>> Set<V> newTreeSet(V... values) {
         Set<V> set = new TreeSet<V>();
         Collections.addAll(set, values);
 
         return set;
     }
-
-    public static <V> List<V> makeList(Object... values) {
-        List list = new ArrayList(values.length);
-        Collections.addAll(list, values);
-
-        return list;
-    }
-
-    public static boolean equals(Object first, Object second) {
-        if (first == null || second == null) {
-            return first == null && second == null;
-        } else {
-            return first.equals(second);
-        }
-    }
-
-    public static boolean proxySafeEquals(Object first, Object second) {
-        return equals(proxySafeCast(first), proxySafeCast(second));
-    }
-
 
     public static <T, C extends Collection<T>> List<T> flatten(Collection<C> colOfCols) {
         int size = 0;
@@ -678,22 +541,16 @@ public class Utils {
         return list.toArray(Arrays.copyOf(array, list.size()));
     }
 
-    public static <T_Result, T_Collection> T_Result foldLeft(Collection<T_Collection> collection, Function2<T_Result, T_Result, T_Collection> function) {
+    public static <T_Result, T_Collection> T_Result foldLeft(Collection<T_Collection> collection, F2<T_Result, T_Collection, T_Result> function) {
         return foldLeft(collection, function, null);
     }
 
-    public static <T_Result, T_Collection> T_Result foldLeft(Collection<T_Collection> collection, Function2<T_Result, T_Result, T_Collection> function, T_Result initialValue) {
+    public static <T_Result, T_Collection> T_Result foldLeft(Collection<T_Collection> collection, F2<T_Result, T_Collection, T_Result> function, T_Result initialValue) {
         T_Result currentValue = initialValue;
         for (T_Collection element : collection) {
             currentValue = function.apply(currentValue, element);
         }
         return currentValue;
-    }
-
-    public static interface Function2<T_Result, T_FirstArgument, T_SecondArgument> {
-
-        T_Result apply(T_FirstArgument firstArgument, T_SecondArgument secondArgument);
-
     }
 
     public static <InV, OutV, C extends Collection<OutV>> C collect(C output, Collection<InV> input, Function<InV, OutV> transformation) {
@@ -741,5 +598,76 @@ public class Utils {
         }
         return count;
     }
+
+
+    /**
+     * Metoda koduje long'a wraz z 8 bitową sumą kontrolną w tekst 14 znakowy zawierający cyfry i wielkie litery alfabetu.
+     * Dla wartości <code>null</code> rzuca NPE.
+     *
+     * @param id identyfikator do zakodowania
+     * @return kod 14 znakowy
+     * @see #decodeSafeLongCode(String)
+     */
+    public static String generateSafeLongCode(Long id) {
+        if (id < 0) throw new IllegalArgumentException("id cannot be negative.");
+
+        ByteBuffer buf = ByteBuffer.allocate(9).putLong(id);
+        return StringUtils.leftPad(new BigInteger(buf.put(CRC8.calc(buf.array(), 8)).array()).toString(36), 14, '0').toUpperCase();
+    }
+
+
+    /**
+     * Metoda dekoduje bezpiecznie zakodowanego long'a. Jeżeli długość kodu jest różna od 14 lub nie zgadza się suma kontrolna to rzucany jest {@link IllegalArgumentException}.
+     *
+     * @param safeLongCode kod 14 znakowy
+     * @return odkodowana wartość
+     * @throws IllegalArgumentException kiedy kod jest niepoprawny
+     * @see #generateSafeLongCode(Long)
+     */
+    public static Long decodeSafeLongCode(String safeLongCode) {
+        if (safeLongCode.length() != 14) throw new IllegalArgumentException("Code length is invalid.");
+
+        byte[] array;
+        try {
+            array = new BigInteger(safeLongCode, 36).toByteArray();
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+        ByteBuffer buf = ByteBuffer.allocate(9);
+        for (int i = 0; i < (9 - array.length); i++) buf.put((byte) 0);
+        buf.put(array);
+        if (CRC8.calc(buf.array(), 8) != buf.get(8)) throw new IllegalArgumentException("CRC is invalid.");
+        return buf.getLong(0);
+    }
+
+    public static <T extends Serializable> T[] toIdArray(Collection<? extends IDataObject<T>> objects, Class<T> idClass) {
+        //noinspection unchecked
+        T[] result = (T[]) Array.newInstance(idClass, objects.size());
+
+        int i = 0;
+        for (IDataObject<T> object : objects) {
+            result[i++] = object.getId();
+        }
+        return result;
+    }
+
+
+    public static Transformer dataObjectToIdTransformer() {
+        return new Transformer() {
+            @Override
+            public Object transform(Object input) {
+                return Utils.<IDataObject>proxySafeCast(input).getId();
+            }
+        };
+    }
+
+    public static <InputType, OutputType> OutputType transform(Collection<InputType> inputCollection, F0<OutputType> outputFactory, Void2<OutputType, InputType> modifier) {
+        OutputType outputType = outputFactory.apply();
+        for (InputType input : inputCollection) {
+            modifier.apply(outputType, input);
+        }
+        return outputType;
+    }
+
 
 }

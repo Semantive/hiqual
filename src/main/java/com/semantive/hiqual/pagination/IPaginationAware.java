@@ -1,18 +1,18 @@
 package com.semantive.hiqual.pagination;
 
 /**
- * Interfejs dla kolekcji paginowalnych.
+ * Interface implemented by the collections which contains a single page of elements rather than all of them.
  *
  * @author Jacek Lewandowski
  */
 public interface IPaginationAware {
     /**
-     * @return zwraca całkowitą liczbę wierszy w źródle danych.
+     * @return returns the total number of elements - not only on the page represented by this object.
      */
     int totalSize();
 
     /**
-     * @return zwraca numer pierwszego elementu w tej kolekcji
+     * @return returns the offset of this partial collection in the collection of all elements.
      */
     int offset();
 }

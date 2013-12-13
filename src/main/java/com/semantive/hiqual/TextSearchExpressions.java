@@ -11,10 +11,12 @@ import java.util.Set;
 
 /**
  * @author Jacek Lewandowski
+ *         <p/>
+ *         TODO provide builders for HQL statements
  */
 public class TextSearchExpressions implements Serializable {
 
-    private Set<PropertyExpression> propertyExpressions = new HashSet<PropertyExpression>();
+    private final Set<PropertyExpression> propertyExpressions = new HashSet<PropertyExpression>();
 
     public static enum PropertyExpressionTypeDict implements IDescribed {
 

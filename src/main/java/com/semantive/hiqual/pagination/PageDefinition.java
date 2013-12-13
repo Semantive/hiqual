@@ -1,6 +1,6 @@
 package com.semantive.hiqual.pagination;
 
-import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -20,16 +20,39 @@ public class PageDefinition implements Serializable {
      */
     public final int pageSize;
 
-    public PageDefinition(int pageStart, int pageSize) {
-        this.pageStart = pageStart;
-        this.pageSize = pageSize;
+    public PageDefinition(Integer pageStart, Integer pageSize) {
+        if (pageStart == null)
+            this.pageStart = 0;
+        else
+            this.pageStart = pageStart;
+
+        if (pageSize == null)
+            this.pageSize = Integer.MAX_VALUE;
+        else
+            this.pageSize = pageSize;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PageDefinition that = (PageDefinition) o;
+        return pageSize == that.pageSize && pageStart == that.pageStart;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = pageStart;
+        result = 31 * result + pageSize;
+        return result;
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("pageStart", pageStart)
-                .add("pageSize", pageSize)
+        return new ToStringBuilder(this)
+                .append("pageStart", pageStart)
+                .append("pageSize", pageSize)
                 .toString();
     }
 }

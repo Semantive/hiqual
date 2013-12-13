@@ -16,14 +16,14 @@ import java.util.*;
 
 // TODO testy i dokumentacja
 public class PropertySetter<T> {
-    private Method[] writeMethods;
-    private Method[] readMethods;
-    private Class[] classes;
-    private int hash;
+    private final Method[] writeMethods;
+    private final Method[] readMethods;
+    private final Class[] classes;
+    private final int hash;
     private boolean traverseCollections;
     private boolean setEmptyCollectionIfNull;
-    private String[] pathElems;
-    private Class<T> modelClass;
+    private final String[] pathElems;
+    private final Class<T> modelClass;
 
     public PropertySetter(String path, Class<T> c) {
         this(path, c, MapUtils.EMPTY_MAP);
@@ -103,7 +103,7 @@ public class PropertySetter<T> {
             bean = v;
         }
         try {
-            if (traverseCollections && Utils.isCollectionInterfaceOrArray(classes[classes.length - 1])) {
+            if (traverseCollections && Is.collectionInterfaceOrArray(classes[classes.length - 1])) {
                 Class<?> c = classes[classes.length - 1];
 
                 if (value != null || setEmptyCollectionIfNull) {
