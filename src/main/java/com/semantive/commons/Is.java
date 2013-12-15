@@ -18,8 +18,8 @@ public class Is {
         if (o1 != null && o2 != null) {
             if (o1 == o2) return true;
 
-            PropertySetter ps1 = new PropertySetter(propertyPath, o1.getClass());
-            PropertySetter ps2 = new PropertySetter(propertyPath, o2.getClass());
+            PropertyAccessor ps1 = new PropertyAccessor(propertyPath, o1.getClass());
+            PropertyAccessor ps2 = new PropertyAccessor(propertyPath, o2.getClass());
 
             return ObjectUtils.equals(ps1.getProperty(o1), ps2.getProperty(o2));
         } else {
@@ -29,7 +29,7 @@ public class Is {
 
     public static boolean nullValue(Object o, String propertyPath) {
         if (o == null) return true;
-        PropertySetter ps = new PropertySetter(propertyPath, o.getClass());
+        PropertyAccessor ps = new PropertyAccessor(propertyPath, o.getClass());
         return ps.getProperty(o) == null;
     }
 

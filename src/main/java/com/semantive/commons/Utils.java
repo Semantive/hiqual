@@ -322,12 +322,29 @@ public class Utils {
         return new ListWrapper<T>(objects);
     }
 
+
+    public static <T> String arrayToDelimitedString(T[] array, String left, String delimiter, String right) {
+        return arrayToDelimitedString(array, 0, array.length, left, delimiter, right);
+    }
+
+    public static <T> String arrayToDelimitedString(T[] array, int offset, int length, String delimiter) {
+        return arrayToDelimitedString(array, offset, length, "", delimiter, "");
+    }
+
     public static <T> String arrayToDelimitedString(T[] array, String delimiter) {
+        return arrayToDelimitedString(array, 0, array.length, "", delimiter, "");
+    }
+
+    public static <T> String arrayToString(T[] array) {
+        return arrayToDelimitedString(array, 0, array.length, "", "", "");
+    }
+
+    public static <T> String arrayToDelimitedString(T[] array, int offset, int length, String left, String delimiter, String right) {
         StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < array.length - 1; i++) {
-            buf.append(array[i]).append(delimiter);
+        for (int i = offset; i < offset + length - 1; i++) {
+            buf.append(left).append(array[i]).append(right).append(delimiter);
         }
-        if (array.length > 0) buf.append(array[array.length - 1]);
+        if (length > 0) buf.append(left).append(array[offset + length - 1]).append(right);
         return buf.toString();
     }
 
@@ -669,5 +686,44 @@ public class Utils {
         return outputType;
     }
 
+
+    public static Object copyCollectionOrArray(Object collectionOrArray, Class<?> desiredCollectionType) {
+        int size = (collectionOrArray != null) ? Utils.getCollectionOrArraySize(collectionOrArray) : 0;
+
+        if (desiredCollectionType.isAssignableFrom(Set.class)) {
+            Set set = new HashSet(size);
+            Utils.fillCollection(set, collectionOrArray);
+            return set;
+
+        } else if (desiredCollectionType.isAssignableFrom(SortedSet.class)) {
+            SortedSet set = new TreeSet();
+            Utils.fillCollection(set, collectionOrArray);
+            return set;
+
+        } else if (desiredCollectionType.isAssignableFrom(List.class)) {
+            List list = new ArrayList(size);
+            Utils.fillCollection(list, collectionOrArray);
+            return list;
+
+        } else if (desiredCollectionType.isAssignableFrom(Map.class)) {
+            Map map = new HashMap(size);
+            Utils.fillMap(map, collectionOrArray);
+            return map;
+
+        } else if (desiredCollectionType.isAssignableFrom(SortedMap.class)) {
+            SortedMap map = new TreeMap();
+            Utils.fillMap(map, collectionOrArray);
+            return map;
+
+        } else if (desiredCollectionType.isArray()) {
+            // TODO fix this case
+            Object[] array = new Object[size];
+            Utils.fillArray(array, collectionOrArray);
+            return array;
+
+        } else {
+            throw new IllegalArgumentException("Unknown collection");
+        }
+    }
 
 }

@@ -7,22 +7,22 @@ import org.apache.commons.collections.MapUtils;
  * @author Jacek Lewandowski
  */
 public class CopyPropertiesFunction<FromType, ToType> implements F2<FromType, ToType, Void> {
-    private PropertySetter<FromType>[] readers;
+    private PropertyAccessor<FromType>[] readers;
 
-    private PropertySetter<ToType>[] writers;
+    private PropertyAccessor<ToType>[] writers;
 
     public CopyPropertiesFunction(Class<FromType> fromClass, Class<ToType> toClass, String... properties) {
-        readers = new PropertySetter[properties.length];
+        readers = new PropertyAccessor[properties.length];
 
         for (int i = 0; i < properties.length; i++) {
-            readers[i] = new PropertySetter<FromType>(properties[i], fromClass, MapUtils.EMPTY_MAP);
+            readers[i] = new PropertyAccessor<FromType>(properties[i], fromClass, MapUtils.EMPTY_MAP);
         }
         if (fromClass.equals(toClass)) {
-            writers = (PropertySetter<ToType>[]) readers;
+            writers = (PropertyAccessor<ToType>[]) readers;
         } else {
-            writers = new PropertySetter[properties.length];
+            writers = new PropertyAccessor[properties.length];
             for (int i = 0; i < properties.length; i++) {
-                writers[i] = new PropertySetter<ToType>(properties[i], toClass, MapUtils.EMPTY_MAP);
+                writers[i] = new PropertyAccessor<ToType>(properties[i], toClass, MapUtils.EMPTY_MAP);
             }
         }
     }

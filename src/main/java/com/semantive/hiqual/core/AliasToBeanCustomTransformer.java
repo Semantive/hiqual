@@ -1,6 +1,6 @@
 package com.semantive.hiqual.core;
 
-import com.semantive.commons.PropertySetter;
+import com.semantive.commons.PropertyAccessor;
 import com.semantive.commons.Utils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -15,15 +15,15 @@ import java.util.Map;
  * @author Jacek Lewandowski
  *         TODO testy i dokumentacja
  */
-public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
+public class AliasToBeanCustomTransformer<T> extends BasicTransformerAdapter {
 
     public static final char DOT = '.';
 
     public static final char UNDERSCORE = '_';
 
-    private Class beanClass;
+    private Class<T> beanClass;
 
-    private PropertySetter[] propertySetters;
+    private PropertyAccessor<T>[] propertyAccessors;
 
     private String skipComponent;
 
@@ -31,8 +31,8 @@ public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
 
     private Map<String, Class> classReplacements;
 
-    public static AliasToBeanCustomTransformer build(Class beanClass) {
-        return new AliasToBeanCustomTransformer(beanClass);
+    public static <T> AliasToBeanCustomTransformer<T> build(Class<T> beanClass) {
+        return new AliasToBeanCustomTransformer<T>(beanClass);
     }
 
 
@@ -58,7 +58,7 @@ public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
         return this;
     }
 
-    private AliasToBeanCustomTransformer(Class beanClass) {
+    private AliasToBeanCustomTransformer(Class<T> beanClass) {
         this.beanClass = beanClass;
     }
 
@@ -72,12 +72,14 @@ public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
                 }
             }
 
-            propertySetters = new PropertySetter[paths.length];
+            //noinspection unchecked
+            propertyAccessors = new PropertyAccessor[paths.length];
             for (int i = 0; i < paths.length; i++) {
 
                 if (skipComponent != null && paths[i].startsWith(skipComponent))
                     paths[i] = Utils.trimLeadingCharacter(paths[i].substring(skipComponent.length()), pathSeparator);
 
+                //noinspection unchecked
                 Map<Integer, Class> replacements = MapUtils.EMPTY_MAP;
                 if (classReplacements != null) {
                     replacements = new HashMap<Integer, Class>();
@@ -86,7 +88,7 @@ public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
                             replacements.put(Utils.countOccurrencesOf(entry.getKey(), String.valueOf(pathSeparator)), entry.getValue());
                     }
                 }
-                propertySetters[i] = new PropertySetter(paths[i], beanClass, "\\" + pathSeparator, replacements);
+                propertyAccessors[i] = new PropertyAccessor<T>(paths[i], "\\" + pathSeparator, beanClass, replacements);
             }
         } catch (Exception e) {
             throw new RuntimeException(String.format("Failed to initialize the AliasToBeanCustomTransformer for class %s and property paths %s.", beanClass, Arrays.toString(paths)), e);
@@ -95,13 +97,13 @@ public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
 
     @Override
     public Object transformTuple(Object[] tuple, String[] aliases) {
-        if (propertySetters == null) initialize(aliases);
+        if (propertyAccessors == null) initialize(aliases);
 
         Object bean;
         try {
             bean = beanClass.newInstance();
             for (int i = 0; i < tuple.length; i++) {
-                propertySetters[i].setProperty(bean, tuple[i]);
+                propertyAccessors[i].setProperty(bean, tuple[i]);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -115,7 +117,7 @@ public class AliasToBeanCustomTransformer extends BasicTransformerAdapter {
     }
 
     private void checkIfNotInitializedYet() {
-        if (propertySetters != null)
+        if (propertyAccessors != null)
             throw new IllegalStateException("This method can be called only before initialization.");
     }
 
