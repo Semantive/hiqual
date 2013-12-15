@@ -17,7 +17,7 @@ import static com.semantive.commons.functional.Option.some;
 /**
  * @author Piotr Jędruszuk
  */
-public class ReflectionUtils {
+public class SemantiveReflectionUtils {
 
     /**
      * Zwraca klasę będącą najniżej w hierarchii.

@@ -1,7 +1,7 @@
 package com.semantive.hiqual.core;
 
 import com.semantive.commons.PropertyAccessor;
-import com.semantive.commons.Utils;
+import com.semantive.commons.SemantiveStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.transform.BasicTransformerAdapter;
@@ -77,7 +77,7 @@ public class AliasToBeanCustomTransformer<T> extends BasicTransformerAdapter {
             for (int i = 0; i < paths.length; i++) {
 
                 if (skipComponent != null && paths[i].startsWith(skipComponent))
-                    paths[i] = Utils.trimLeadingCharacter(paths[i].substring(skipComponent.length()), pathSeparator);
+                    paths[i] = SemantiveStringUtils.trimLeadingCharacter(paths[i].substring(skipComponent.length()), pathSeparator);
 
                 //noinspection unchecked
                 Map<Integer, Class> replacements = MapUtils.EMPTY_MAP;
@@ -85,7 +85,7 @@ public class AliasToBeanCustomTransformer<T> extends BasicTransformerAdapter {
                     replacements = new HashMap<Integer, Class>();
                     for (Map.Entry<String, Class> entry : classReplacements.entrySet()) {
                         if (paths[i].startsWith(entry.getKey()))
-                            replacements.put(Utils.countOccurrencesOf(entry.getKey(), String.valueOf(pathSeparator)), entry.getValue());
+                            replacements.put(SemantiveStringUtils.countOccurrencesOf(entry.getKey(), String.valueOf(pathSeparator)), entry.getValue());
                     }
                 }
                 propertyAccessors[i] = new PropertyAccessor<T>(paths[i], "\\" + pathSeparator, beanClass, replacements);

@@ -50,7 +50,7 @@ public class Is {
     }
 
     public static boolean proxySafeEqual(Object first, Object second) {
-        return ObjectUtils.equals(Utils.proxySafeCast(first), Utils.proxySafeCast(second));
+        return ObjectUtils.equals(SemantiveObjectUtils.proxySafeCast(first), SemantiveObjectUtils.proxySafeCast(second));
     }
 
     public static <T extends Serializable> boolean idNotNull(IDataObject<T> dataObject) {

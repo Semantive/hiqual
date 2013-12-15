@@ -1,6 +1,6 @@
 package com.semantive.hiqual.core;
 
-import com.semantive.commons.Utils;
+import com.semantive.commons.SemantiveStringUtils;
 import com.semantive.hiqual.IResultSetConfig;
 import com.semantive.hiqual.TextSearchExpressions;
 import org.hibernate.Query;
@@ -16,7 +16,7 @@ public class HibernateQueryUtils {
     // TODO napisać do tego testy i dokumentację
     public static String lower(String str, boolean condition) {
         if (condition)
-            return Utils.makeCall(str, "LOWER");
+            return SemantiveStringUtils.makeCall(str, "LOWER");
         else
             return str;
     }
@@ -24,7 +24,7 @@ public class HibernateQueryUtils {
     @Deprecated
     public static String generateAutocompleteQuery(String query, boolean caseSensitive, boolean beforeWildcard, boolean afterWildcard, String... fields) {
         if (query == null) return null;
-        String[] tokens = Utils.tokenizeAndWildcard(query, beforeWildcard, afterWildcard, 10);
+        String[] tokens = SemantiveStringUtils.tokenizeAndWildcard(query, beforeWildcard, afterWildcard, 10);
 
         if (tokens.length == 0 || fields.length == 0) return null;
 
@@ -37,10 +37,10 @@ public class HibernateQueryUtils {
                 conditionParts[j] = buf.toString();
             }
 
-            tokens[i] = "(" + Utils.arrayToDelimitedString(conditionParts, " OR ") + ")";
+            tokens[i] = "(" + SemantiveStringUtils.arrayToDelimitedString(conditionParts, " OR ") + ")";
         }
 
-        return " (" + Utils.arrayToDelimitedString(tokens, " AND ") + ") ";
+        return " (" + SemantiveStringUtils.arrayToDelimitedString(tokens, " AND ") + ") ";
     }
 
 
@@ -53,7 +53,7 @@ public class HibernateQueryUtils {
         boolean caseSensitive = false;
         int tokenLimit = 5;
 
-        String[] tokens = Utils.tokenizeAndWildcard(resultSetConfig.searchString(), beforeWildcard, afterWildcard, tokenLimit);
+        String[] tokens = SemantiveStringUtils.tokenizeAndWildcard(resultSetConfig.searchString(), beforeWildcard, afterWildcard, tokenLimit);
 
         if (tokens.length == 0) return null;
 
@@ -67,10 +67,10 @@ public class HibernateQueryUtils {
                 conditionParts[j] = buf.toString();
             }
 
-            tokens[i] = "(" + Utils.arrayToDelimitedString(conditionParts, " OR ") + ")";
+            tokens[i] = "(" + SemantiveStringUtils.arrayToDelimitedString(conditionParts, " OR ") + ")";
         }
 
-        return " (" + Utils.arrayToDelimitedString(tokens, " AND ") + ") ";
+        return " (" + SemantiveStringUtils.arrayToDelimitedString(tokens, " AND ") + ") ";
     }
 
     @Deprecated

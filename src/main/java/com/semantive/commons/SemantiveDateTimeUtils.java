@@ -7,7 +7,7 @@ import java.util.GregorianCalendar;
 /**
  * @author Jacek Lewandowski
  */
-public class DateTimeUtils {
+public class SemantiveDateTimeUtils {
     public final static int[] TIME_SET = new int[]{Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND};
 
     public final static int[] DATE_SET = new int[]{Calendar.ERA, Calendar.YEAR, Calendar.MONTH, Calendar.DAY_OF_MONTH};

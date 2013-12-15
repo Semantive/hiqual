@@ -268,7 +268,7 @@ public class PropertyAccessor<T> {
 
                 // convert the collection to desired type
                 Class<?> collectionClass = classes[classes.length - 1];
-                Object processedCollection = Utils.copyCollectionOrArray(value, collectionClass);
+                Object processedCollection = SemantiveCollectionUtils.copyCollectionOrArray(value, collectionClass);
                 writeMethods[writeMethods.length - 1].invoke(bean, processedCollection);
             } else {
                 writeMethods[writeMethods.length - 1].invoke(bean, value);
@@ -343,7 +343,7 @@ public class PropertyAccessor<T> {
      * @return a field for the underlying property
      */
     public Field getField() {
-        return ReflectionUtils.getSingleField(getPropertyParentClass(), getPropertyName()).get();
+        return SemantiveReflectionUtils.getSingleField(getPropertyParentClass(), getPropertyName()).get();
     }
 
     /**
@@ -353,7 +353,7 @@ public class PropertyAccessor<T> {
      * @return a path to the parent property
      */
     public String getPropertyParentPath() {
-        return Utils.arrayToDelimitedString(pathElems, 0, pathElems.length - 1, ".");
+        return SemantiveStringUtils.arrayToDelimitedString(pathElems, 0, pathElems.length - 1, ".");
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.semantive.hiqual.core;
 
-import com.semantive.commons.Utils;
+import com.semantive.commons.SemantiveStringUtils;
 import com.semantive.commons.functional.Void1;
 import com.semantive.hiqual.FetchableProperty;
 import com.semantive.hiqual.IResultSetConfig;
@@ -237,7 +237,7 @@ public class QueryBuilder<T> {
         boolean caseSensitive = false;
         int tokenLimit = 5;
 
-        String[] tokens = Utils.tokenizeAndWildcard(resultSetConfig.searchString(), beforeWildcard, afterWildcard, tokenLimit);
+        String[] tokens = SemantiveStringUtils.tokenizeAndWildcard(resultSetConfig.searchString(), beforeWildcard, afterWildcard, tokenLimit);
 
         if (tokens.length == 0) return null;
 
@@ -251,10 +251,10 @@ public class QueryBuilder<T> {
                 conditionParts[j] = buf.toString();
             }
 
-            tokens[i] = "(" + Utils.arrayToDelimitedString(conditionParts, " OR ") + ")";
+            tokens[i] = "(" + SemantiveStringUtils.arrayToDelimitedString(conditionParts, " OR ") + ")";
         }
 
-        return " (" + Utils.arrayToDelimitedString(tokens, " AND ") + ") ";
+        return " (" + SemantiveStringUtils.arrayToDelimitedString(tokens, " AND ") + ") ";
     }
 
     public String generateSelectClause() {
