@@ -86,12 +86,9 @@ public class SemantiveCollectionUtils {
         }
     }
 
-    public static void fillArray(Object[] dest, Object src) {
-        if (src != null) {
-            for (int i = 0; i < Array.getLength(src); i++) {
-                dest[i] = Array.get(src, i);
-            }
-        }
+    public static void fillArray(Object dest, Object src) {
+        //noinspection SuspiciousSystemArraycopy
+        System.arraycopy(src, 0, dest, 0, Array.getLength(src));
     }
 
     public static <K, V, T> Map<K, V> toMap(Collection<T> collection, Function<T, Map.Entry<K, V>> entryMaker) {
@@ -244,8 +241,7 @@ public class SemantiveCollectionUtils {
             return map;
 
         } else if (desiredCollectionType.isArray()) {
-            // TODO fix this case
-            Object[] array = new Object[size];
+            Object array = Array.newInstance(desiredCollectionType.getComponentType(), Array.getLength(collectionOrArray));
             fillArray(array, collectionOrArray);
             return array;
 
